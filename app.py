@@ -621,34 +621,57 @@ def assign_plant_to_user():
 
 my_token = os.getenv("TREFLE_KEY")
 
-
 #SEARCH PLANTS BY NAME 
 @app.route('/api/plants/name', methods=["POST"])
 @cross_origin()
 @jwt_required()
 def get_plants_by_name():
-    current_app.logger.info("Endpoint /api/plants/name called")
     name = request.json.get("name")
-    try:
-        response = requests.get(f"https://trefle.io/api/v1/species/search?token={my_token}&q={name}")
-        response.raise_for_status()
+    response = requests.get(f"https://trefle.io/api/v1/species/search?token={my_token}&q={name}")
+    if response.ok:
         plant_data = response.json()
-        my_plants = [
-            {
-                "common_name": item.get('common_name'),
-                "plant_id": item.get('id'),
-                'latin_name': item.get('scientific_name'),
-                'photo': item.get('image_url', 'https://res.cloudinary.com/dououppib/image/upload/v1710761333/PLANTS/w5b1sesmmotgajdjmlux.webp')
+        my_plants = []
+        for item in plant_data['data']:
+            image_url = item['image_url'] if item['image_url'] is not None else 'https://res.cloudinary.com/dououppib/image/upload/v1710761333/PLANTS/w5b1sesmmotgajdjmlux.webp'
+            plant_info = {
+                "common_name": item['common_name'],
+                "plant_id": item['id'],
+                'latin_name': item['scientific_name'],
+                'photo': image_url  
             }
-            for item in plant_data.get('data', [])
-        ]
+            my_plants.append(plant_info)
         return jsonify(my_plants)
-    except RequestException as e:
-        current_app.logger.error(f"Request failed: {e}")
-        return jsonify({"error": "Failed to fetch data from Trefle API"}), 500
-    except Exception as e:  # This will catch any other exceptions including RecursionError
-        current_app.logger.error(f"Unexpected error: {e}")
-        return jsonify({"error": str(e)}), 500
+    else:
+        return jsonify({"error": "Failed to fetch data from Trefle API"}), response.status_code
+
+
+# #SEARCH PLANTS BY NAME 
+# @app.route('/api/plants/name', methods=["POST"])
+# @cross_origin()
+# @jwt_required()
+# def get_plants_by_name():
+#     current_app.logger.info("Endpoint /api/plants/name called")
+#     name = request.json.get("name")
+#     try:
+#         response = requests.get(f"https://trefle.io/api/v1/species/search?token={my_token}&q={name}")
+#         response.raise_for_status()
+#         plant_data = response.json()
+#         my_plants = [
+#             {
+#                 "common_name": item.get('common_name'),
+#                 "plant_id": item.get('id'),
+#                 'latin_name': item.get('scientific_name'),
+#                 'photo': item.get('image_url', 'https://res.cloudinary.com/dououppib/image/upload/v1710761333/PLANTS/w5b1sesmmotgajdjmlux.webp')
+#             }
+#             for item in plant_data.get('data', [])
+#         ]
+#         return jsonify(my_plants)
+#     except RequestException as e:
+#         current_app.logger.error(f"Request failed: {e}")
+#         return jsonify({"error": "Failed to fetch data from Trefle API"}), 500
+#     except Exception as e:  # This will catch any other exceptions including RecursionError
+#         current_app.logger.error(f"Unexpected error: {e}")
+#         return jsonify({"error": str(e)}), 500
 
 
 
