@@ -2,7 +2,6 @@ import os, psycopg
 from flask import g
 from psycopg.rows import dict_row
 
-#DATABASE_URL='postgresql://bloom_www8_user:XISAZAAILCfLcM8iBrBFBAUwXiPQsBXd@dpg-co2kftol6cac73bpd8pg-a.frankfurt-postgres.render.com/bloom_www8'
 
 class DatabaseConnection:
     database_url = os.getenv("DATABASE_URL")
