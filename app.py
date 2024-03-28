@@ -41,7 +41,7 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(
     days=1
 )  # I JUST ADD THIS FOR NOW SO THE TOKEN DON"T KEEP EXIRING PLEASE REMOVE LATER.
 
-CORS(app, origins=["https://bloom-frontend-vryp.onrender.com"], supports_credentials=True)
+CORS(app, supports_credentials=True)
 
 socketio = SocketIO(
     app,
