@@ -1,7 +1,7 @@
 import os
 from datetime import timedelta
 import requests
-
+import psutil
 import cloudinary
 import cloudinary.uploader
 from dotenv import load_dotenv
@@ -801,6 +801,17 @@ def get_chats_by_chat_id(chat_id):
     messages = repository.find_message_by_chat_id(chat_id)
     return jsonify(messages), 200
 
+
+
+
+
+def log_memory_usage():
+    process = psutil.Process(os.getpid())
+    memory_usage = process.memory_info().rss  # in bytes
+    print(f"Current memory usage: {memory_usage / 1024 ** 2:.2f} MB")
+
+# Call this function at critical points in your application
+log_memory_usage()
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5001))

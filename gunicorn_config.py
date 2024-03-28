@@ -2,7 +2,7 @@
 import multiprocessing
 
 # Basic bind configuration - IP and port your app will listen on
-bind = "0.0.0.0:5001"
+bind = "0.0.0.0:5000"
 
 # Workers configurations
 workers = multiprocessing.cpu_count() * 2 + 1  # Recommended formula for the number of workers
