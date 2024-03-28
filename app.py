@@ -46,8 +46,8 @@ CORS(app, origins=["http://localhost:5173"], supports_credentials=True) # also a
 socketio = SocketIO(
     app,
     cors_allowed_origins=["http://localhost:5173"],# added this instead of allowing all 
-    logger=True,
-    engineio_logger=True,
+    logger=False,
+    engineio_logger=False,
     async_mode="gevent",
 )  # we are allowing all origings just for development
 jwt = JWTManager(app)
