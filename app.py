@@ -43,13 +43,8 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(
 
 CORS(app, origins=[os.getenv("FRONTEND_ORIGIN")], supports_credentials=True)
 
-socketio = SocketIO(
-    app,
-    cors_allowed_origins=[os.getenv("FRONTEND_ORIGIN")],
-    logger=False,
-    engineio_logger=False,
-    async_mode="gevent",
-)  # we are allowing all origings just for development
+socketio = SocketIO(app, cors_allowed_origins="*", logger=False, engineio_logger=False, async_mode="gevent")
+
 jwt = JWTManager(app)
 
 
