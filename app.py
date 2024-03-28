@@ -5,17 +5,16 @@ import requests
 import cloudinary
 import cloudinary.uploader
 from dotenv import load_dotenv
-from flask import Flask, jsonify, make_response, request
+from flask import Flask, jsonify, make_response, request, current_app
 from flask.helpers import get_flashed_messages
 from flask_cors import CORS, cross_origin
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required
 # dependecies for livechat
 from flask_socketio import SocketIO, emit, join_room, leave_room, rooms
-
+from requests.exceptions import RequestException
 from werkzeug.utils import secure_filename
 
 from lib.database_connection import get_flask_database_connection
-from flask import current_app
 
 from lib.models.extended_help_offer import ExtendedHelpOffer
 from lib.models.help_offer import HelpOffer
@@ -200,55 +199,6 @@ def edit_user_picture(id):
         jsonify({"msg": "Avatar updated successfully", "avatar_url": avatar_url}),
         200,
     )
-
-
-# CONFLICTS WITH NEEDED ROUTE
-# # get all help offers made by a specific "" @app.route("/help_offers/<user_id>", methods=["GET"])
-# def find_offers_by_user_id(user_id):
-#
-#     # connect to db and set up offer repository
-#     connection = get_flask_database_connection(app)
-#     offer_repository = HelpOfferRepository(connection)
-#
-#     # returns array of HelpOffer object IDs made by user matching user_id
-#     offers_by_user = offer_repository.find_by_user(user_id)
-#     user_offers = []
-#     for offer in offers_by_user:
-#         offer_obj = {
-#             "id": offer.id,
-#             "user_id": offer.user_id,
-#             "request_id": offer.request_id,
-#             "message": offer.message,
-#             "bid": offer.bid,
-#             "status": offer.status,
-#         }
-#         user_offers.append(offer_obj)
-#
-#     return jsonify(user_offers), 200
-
-# # get all help offers made by a specific user
-# @app.route("/help_offers/<user_id>", methods=["GET"])
-# def find_offers_by_user_id(user_id):
-#
-#     # connect to db and set up offer repository
-#     connection = get_flask_database_connection(app)
-#     offer_repository = HelpOfferRepository(connection)
-#
-#     # returns array of HelpOffer object IDs made by user matching user_id
-#     offers_by_user = offer_repository.find_by_user(user_id)
-#     user_offers = []
-#     for offer in offers_by_user:
-#         offer_obj = {
-#             "id": offer.id,
-#             "user_id": offer.user_id,
-#             "request_id": offer.request_id,
-#             "message": offer.message,
-#             "bid": offer.bid,
-#             "status": offer.status,
-#         }
-#         user_offers.append(offer_obj)
-#
-#     return jsonify(user_offers), 200
 
 
 # create a new help offer for a help request
@@ -696,9 +646,12 @@ def get_plants_by_name():
                 }
                 my_plants.append(plant_info)
             return jsonify(my_plants)
-        except Exception as e:
-            current_app.logger.error(f"Error: {e}")
-            return jsonify({"error": str(e)}), 500    
+        except RequestException as e:
+            current_app.logger.error(f"Request failed: {e}")
+            return jsonify({"error": "Failed to fetch data"}), 500
+        except RecursionError as e:
+            current_app.logger.error(f"Recursion error: {e}")
+            return jsonify({"error": "Server error"}), 500  
     else:
         return jsonify({"error": "Failed to fetch data from Trefle API"}), response.status_code
 
