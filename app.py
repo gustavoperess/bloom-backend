@@ -1,19 +1,19 @@
-import os
+import os, sys
 from datetime import timedelta
 import requests
-import psutil
+
 import cloudinary
 import cloudinary.uploader
 from dotenv import load_dotenv
-from flask import Flask, jsonify, make_response, request, current_app
+from flask import Flask, jsonify, make_response, request
 from flask.helpers import get_flashed_messages
 from flask_cors import CORS, cross_origin
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required
 # dependecies for livechat
 from flask_socketio import SocketIO, emit, join_room, leave_room, rooms
-from requests.exceptions import RequestException
+
 from werkzeug.utils import secure_filename
-import gevent.monkey
+
 from lib.database_connection import get_flask_database_connection
 
 from lib.models.extended_help_offer import ExtendedHelpOffer
@@ -33,7 +33,7 @@ load_dotenv()
 
 
 app = Flask(__name__)
-gevent.monkey.patch_all()
+
 
 # Token Setup
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
@@ -199,6 +199,55 @@ def edit_user_picture(id):
         jsonify({"msg": "Avatar updated successfully", "avatar_url": avatar_url}),
         200,
     )
+
+
+# CONFLICTS WITH NEEDED ROUTE
+# # get all help offers made by a specific "" @app.route("/help_offers/<user_id>", methods=["GET"])
+# def find_offers_by_user_id(user_id):
+#
+#     # connect to db and set up offer repository
+#     connection = get_flask_database_connection(app)
+#     offer_repository = HelpOfferRepository(connection)
+#
+#     # returns array of HelpOffer object IDs made by user matching user_id
+#     offers_by_user = offer_repository.find_by_user(user_id)
+#     user_offers = []
+#     for offer in offers_by_user:
+#         offer_obj = {
+#             "id": offer.id,
+#             "user_id": offer.user_id,
+#             "request_id": offer.request_id,
+#             "message": offer.message,
+#             "bid": offer.bid,
+#             "status": offer.status,
+#         }
+#         user_offers.append(offer_obj)
+#
+#     return jsonify(user_offers), 200
+
+# # get all help offers made by a specific user
+# @app.route("/help_offers/<user_id>", methods=["GET"])
+# def find_offers_by_user_id(user_id):
+#
+#     # connect to db and set up offer repository
+#     connection = get_flask_database_connection(app)
+#     offer_repository = HelpOfferRepository(connection)
+#
+#     # returns array of HelpOffer object IDs made by user matching user_id
+#     offers_by_user = offer_repository.find_by_user(user_id)
+#     user_offers = []
+#     for offer in offers_by_user:
+#         offer_obj = {
+#             "id": offer.id,
+#             "user_id": offer.user_id,
+#             "request_id": offer.request_id,
+#             "message": offer.message,
+#             "bid": offer.bid,
+#             "status": offer.status,
+#         }
+#         user_offers.append(offer_obj)
+#
+#     return jsonify(user_offers), 200
 
 
 # create a new help offer for a help request
@@ -620,6 +669,8 @@ def assign_plant_to_user():
     )
 
 my_token = os.getenv("TREFLE_KEY")
+print(sys.getrecursionlimit())
+sys.setrecursionlimit(1500)
 
 #SEARCH PLANTS BY NAME 
 @app.route('/api/plants/name', methods=["POST"])
@@ -643,35 +694,6 @@ def get_plants_by_name():
         return jsonify(my_plants)
     else:
         return jsonify({"error": "Failed to fetch data from Trefle API"}), response.status_code
-
-
-# #SEARCH PLANTS BY NAME 
-# @app.route('/api/plants/name', methods=["POST"])
-# @cross_origin()
-# @jwt_required()
-# def get_plants_by_name():
-#     current_app.logger.info("Endpoint /api/plants/name called")
-#     name = request.json.get("name")
-#     try:
-#         response = requests.get(f"https://trefle.io/api/v1/species/search?token={my_token}&q={name}")
-#         response.raise_for_status()
-#         plant_data = response.json()
-#         my_plants = [
-#             {
-#                 "common_name": item.get('common_name'),
-#                 "plant_id": item.get('id'),
-#                 'latin_name': item.get('scientific_name'),
-#                 'photo': item.get('image_url', 'https://res.cloudinary.com/dououppib/image/upload/v1710761333/PLANTS/w5b1sesmmotgajdjmlux.webp')
-#             }
-#             for item in plant_data.get('data', [])
-#         ]
-#         return jsonify(my_plants)
-#     except RequestException as e:
-#         current_app.logger.error(f"Request failed: {e}")
-#         return jsonify({"error": "Failed to fetch data from Trefle API"}), 500
-#     except Exception as e:  # This will catch any other exceptions including RecursionError
-#         current_app.logger.error(f"Unexpected error: {e}")
-#         return jsonify({"error": str(e)}), 500
 
 
 
@@ -801,17 +823,6 @@ def get_chats_by_chat_id(chat_id):
     messages = repository.find_message_by_chat_id(chat_id)
     return jsonify(messages), 200
 
-
-
-
-
-def log_memory_usage():
-    process = psutil.Process(os.getpid())
-    memory_usage = process.memory_info().rss  # in bytes
-    print(f"Current memory usage: {memory_usage / 1024 ** 2:.2f} MB")
-
-# Call this function at critical points in your application
-log_memory_usage()
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5001))
