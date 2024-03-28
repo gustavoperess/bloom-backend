@@ -776,7 +776,7 @@ def on_join(data):
     room = data['room']
     sid = request.sid
     join_room(room)
-    logging.info(f"User {sid} joined room {room}")
+    logging.info(f"JOINING THE ROOM User {sid} joined room {room}")
     if room not in room_memberships:
         room_memberships[room] = []
     if sid not in room_memberships[room]:
@@ -788,8 +788,6 @@ def on_join(data):
 
 @socketio.on('message')
 def handle_message(data):
-    logging.info(f"Received message: {data}")
-    logging.info(f"Emitting new message to room {data['room']}")
     room = data['room']
     socketio.emit('new_messages', {'sender': data['sender'], 'message': data['message']}, room=room, include_self=False)
     
@@ -798,6 +796,7 @@ def handle_message(data):
 def on_leave(data):
     room = data['room']
     sid = request.sid
+    logging.info(f"LEAVING THE ROOM User {sid} joined room {room}")
     leave_room(room)
     if room in room_memberships and sid in room_memberships[room]:
         room_memberships[room].remove(sid)
