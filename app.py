@@ -1,6 +1,7 @@
 import os
 from datetime import timedelta
 import requests
+import sys
 
 import cloudinary
 import cloudinary.uploader
@@ -30,7 +31,7 @@ from lib.repositories.plants_user_repository import PlantsUserRepository
 from lib.repositories.user_repository import UserRepository
 
 load_dotenv()
-
+sys.setrecursionlimit(5000)
 
 app = Flask(__name__)
 
