@@ -15,6 +15,7 @@ from flask_socketio import SocketIO, emit, join_room, leave_room, rooms
 from werkzeug.utils import secure_filename
 
 from lib.database_connection import get_flask_database_connection
+from flask import current_app
 
 from lib.models.extended_help_offer import ExtendedHelpOffer
 from lib.models.help_offer import HelpOffer
@@ -677,21 +678,27 @@ sys.setrecursionlimit(1500)
 @cross_origin()
 @jwt_required()
 def get_plants_by_name():
+    print("MY TOKEN", my_token)
+    current_app.logger.info("Endpoint /api/plants/name called")
     name = request.json.get("name")
     response = requests.get(f"https://trefle.io/api/v1/species/search?token={my_token}&q={name}")
     if response.ok:
-        plant_data = response.json()
-        my_plants = []
-        for item in plant_data['data']:
-            image_url = item['image_url'] if item['image_url'] is not None else 'https://res.cloudinary.com/dououppib/image/upload/v1710761333/PLANTS/w5b1sesmmotgajdjmlux.webp'
-            plant_info = {
-                "common_name": item['common_name'],
-                "plant_id": item['id'],
-                'latin_name': item['scientific_name'],
-                'photo': image_url  
-            }
-            my_plants.append(plant_info)
-        return jsonify(my_plants)
+        try:
+            plant_data = response.json()
+            my_plants = []
+            for item in plant_data['data']:
+                image_url = item['image_url'] if item['image_url'] is not None else 'https://res.cloudinary.com/dououppib/image/upload/v1710761333/PLANTS/w5b1sesmmotgajdjmlux.webp'
+                plant_info = {
+                    "common_name": item['common_name'],
+                    "plant_id": item['id'],
+                    'latin_name': item['scientific_name'],
+                    'photo': image_url  
+                }
+                my_plants.append(plant_info)
+            return jsonify(my_plants)
+        except Exception as e:
+            current_app.logger.error(f"Error: {e}")
+            return jsonify({"error": str(e)}), 500    
     else:
         return jsonify({"error": "Failed to fetch data from Trefle API"}), response.status_code
 
