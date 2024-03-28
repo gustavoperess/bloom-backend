@@ -41,11 +41,11 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(
     days=1
 )  # I JUST ADD THIS FOR NOW SO THE TOKEN DON"T KEEP EXIRING PLEASE REMOVE LATER.
 
-CORS(app, origins=["http://localhost:5173"], supports_credentials=True) # also added this
+CORS(app, origins=[os.getenv("FRONTEND_ORIGIN")], supports_credentials=True)
 
 socketio = SocketIO(
     app,
-    cors_allowed_origins=["http://localhost:5173"],# added this instead of allowing all 
+    cors_allowed_origins=[os.getenv("FRONTEND_ORIGIN")],
     logger=False,
     engineio_logger=False,
     async_mode="gevent",

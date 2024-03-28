@@ -9,8 +9,8 @@ workers = multiprocessing.cpu_count() * 2 + 1  # Recommended formula for the num
 worker_class = 'gevent'  # Using gevent for async capabilities, adjust if you're not using async
 
 # Logging configurations
-loglevel = 'info' # to see the info 'info'
-accesslog = '-' # to see the logs '-'
+loglevel = 'warning' # to see the info 'info'
+accesslog = 'None' # to see the logs '-'
 errorlog = '-'
 
 # Secure scheme headers and proxy settings, useful if you're behind a reverse proxy
