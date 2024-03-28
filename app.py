@@ -1,4 +1,4 @@
-import os
+import os, sys
 from datetime import timedelta
 import requests
 
@@ -669,6 +669,8 @@ def assign_plant_to_user():
     )
 
 my_token = os.getenv("TREFLE_KEY")
+print(sys.getrecursionlimit())
+sys.setrecursionlimit(1500)
 
 #SEARCH PLANTS BY NAME 
 @app.route('/api/plants/name', methods=["POST"])
@@ -677,8 +679,6 @@ my_token = os.getenv("TREFLE_KEY")
 def get_plants_by_name():
     name = request.json.get("name")
     response = requests.get(f"https://trefle.io/api/v1/species/search?token={my_token}&q={name}")
-    print(response)
-    print(my_token)
     if response.ok:
         plant_data = response.json()
         my_plants = []
