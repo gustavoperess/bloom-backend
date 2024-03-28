@@ -65,6 +65,11 @@ def log_response_info(response):
     print('Response Headers:', response.headers)
     return response
 
+
+@app.route('/')
+def index():
+    return jsonify({"message": "Application is running"})
+
 # Takes username / email and password from POST request
 # Returns authentication token if good match, otherwise 401
 @app.route("/token", methods=["POST"])
