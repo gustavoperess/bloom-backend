@@ -677,6 +677,8 @@ my_token = os.getenv("TREFLE_KEY")
 def get_plants_by_name():
     name = request.json.get("name")
     response = requests.get(f"https://trefle.io/api/v1/species/search?token={my_token}&q={name}")
+    print(response)
+    print(my_token)
     if response.ok:
         plant_data = response.json()
         my_plants = []
