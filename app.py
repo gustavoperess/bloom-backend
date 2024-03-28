@@ -54,17 +54,14 @@ jwt = JWTManager(app)
 
 
 @app.after_request
-def after_request_func(response):
-    response.headers.add('Access-Control-Allow-Origin', 'https://bloom-frontend-vryp.onrender.com')
-    response.headers.add('Access-Control-Allow-Credentials', 'true')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+def after_request(response):
+    # Log the request and response headers here
+    print("AFTER HERE CHECK")
+    app.logger.info(f"Request Headers: {request.headers}")
+    app.logger.info(f"Response Headers: {response.headers}")
     return response
 
-@app.route('/help_requests3', methods=['GET'])
-def get_help_requests3():
-    # Your existing route logic
-    return jsonify({"message": "CORS should work"})
+
 
 @app.route('/')
 def index():
@@ -442,7 +439,7 @@ def get_all_help_requests_with_user_details():
 
 
 @app.route("/help_requests3", methods=["GET"])
-@cross_origin()
+@cross_origin(origins=['https://bloom-frontend-vryp.onrender.com'])
 def get_help_requests_with_plant_photo_and_user_details():
     connection = get_flask_database_connection(app)
     request_repository = HelpRequestRepository(connection)
