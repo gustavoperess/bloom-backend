@@ -669,7 +669,7 @@ def assign_plant_to_user():
     )
 
 my_token = os.getenv("TREFLE_KEY")
-print(sys.getrecursionlimit())
+print("CHECKING THIS getrecursionlimit", sys.getrecursionlimit())
 sys.setrecursionlimit(1500)
 
 #SEARCH PLANTS BY NAME 
