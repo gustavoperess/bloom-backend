@@ -53,6 +53,12 @@ socketio = SocketIO(
 jwt = JWTManager(app)
 
 
+
+@app.route('/test-cors')
+@cross_origin()
+def test_cors():
+    return jsonify({"message": "CORS test successful"})
+
 # Takes username / email and password from POST request
 # Returns authentication token if good match, otherwise 401
 @app.route("/token", methods=["POST"])
@@ -473,6 +479,7 @@ def get_all_help_requests_with_user_details():
 
 
 @app.route("/help_requests3", methods=["GET"])
+@jwt_required()
 @cross_origin()
 def get_help_requests_with_plant_photo_and_user_details():
     connection = get_flask_database_connection(app)
@@ -669,8 +676,7 @@ def assign_plant_to_user():
     )
 
 my_token = os.getenv("TREFLE_KEY")
-print(sys.getrecursionlimit())
-sys.setrecursionlimit(1500)
+
 
 #SEARCH PLANTS BY NAME 
 @app.route('/api/plants/name', methods=["POST"])

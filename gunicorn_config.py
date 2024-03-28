@@ -21,3 +21,4 @@ forwarded_allow_ips = '*'  # Trust the `X-Forwarded-For` header from all IPs
 secure_scheme_headers = {
     'X-Forwarded-Proto': 'https'
 }
+# to start gunicorn -c gunicorn_config.py app:app
