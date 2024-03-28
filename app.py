@@ -671,7 +671,7 @@ def assign_plant_to_user():
 
 my_token = os.getenv("TREFLE_KEY")
 print("CHECKING THIS getrecursionlimit", sys.getrecursionlimit())
-sys.setrecursionlimit(1500)
+sys.setrecursionlimit(2000)
 
 #SEARCH PLANTS BY NAME 
 @app.route('/api/plants/name', methods=["POST"])
