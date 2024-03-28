@@ -41,7 +41,7 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(
     days=1
 )  # I JUST ADD THIS FOR NOW SO THE TOKEN DON"T KEEP EXIRING PLEASE REMOVE LATER.
 
-CORS(app, supports_credentials=True)
+CORS(app, origins="*", supports_credentials=True) # also added this
 
 socketio = SocketIO(
     app,
@@ -53,14 +53,17 @@ socketio = SocketIO(
 jwt = JWTManager(app)
 
 
-@app.after_request
-def after_request(response):
-    # Log the request and response headers here
-    print("AFTER HERE CHECK")
-    app.logger.info(f"Request Headers: {request.headers}")
-    app.logger.info(f"Response Headers: {response.headers}")
-    return response
 
+@app.before_request
+def log_request_info():
+    print('Headers: %s', request.headers)
+    print('Body: %s', request.get_data())
+    
+    
+@app.after_request
+def log_response_info(response):
+    print('Response Headers:', response.headers)
+    return response
 
 
 @app.route('/')
@@ -439,7 +442,7 @@ def get_all_help_requests_with_user_details():
 
 
 @app.route("/help_requests3", methods=["GET"])
-@cross_origin(origins=['https://bloom-frontend-vryp.onrender.com'])
+@cross_origin()
 def get_help_requests_with_plant_photo_and_user_details():
     connection = get_flask_database_connection(app)
     request_repository = HelpRequestRepository(connection)
