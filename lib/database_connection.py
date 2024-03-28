@@ -6,7 +6,7 @@ from psycopg.rows import dict_row
 
 class DatabaseConnection:
     database_url = os.getenv("DATABASE_URL")
-    print(database_url)
+
 
     def __init__(self, test_mode=False):
         self.test_mode = test_mode
