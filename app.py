@@ -813,6 +813,7 @@ def handle_disconnect():
             
 
 
+
 @app.route("/messages/<chat_id>", methods=["GET"])
 @jwt_required()
 def get_chats_by_chat_id(chat_id):
