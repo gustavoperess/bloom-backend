@@ -1,4 +1,4 @@
-import os, sys
+import os
 from datetime import timedelta
 import requests
 
@@ -54,10 +54,16 @@ jwt = JWTManager(app)
 
 
 
-@app.route('/test-cors')
-@cross_origin()
-def test_cors():
-    return jsonify({"message": "CORS test successful"})
+@app.before_request
+def log_request_info():
+    print('Headers: %s', request.headers)
+    print('Body: %s', request.get_data())
+    
+    
+@app.after_request
+def log_response_info(response):
+    print('Response Headers:', response.headers)
+    return response
 
 # Takes username / email and password from POST request
 # Returns authentication token if good match, otherwise 401
@@ -206,54 +212,6 @@ def edit_user_picture(id):
         200,
     )
 
-
-# CONFLICTS WITH NEEDED ROUTE
-# # get all help offers made by a specific "" @app.route("/help_offers/<user_id>", methods=["GET"])
-# def find_offers_by_user_id(user_id):
-#
-#     # connect to db and set up offer repository
-#     connection = get_flask_database_connection(app)
-#     offer_repository = HelpOfferRepository(connection)
-#
-#     # returns array of HelpOffer object IDs made by user matching user_id
-#     offers_by_user = offer_repository.find_by_user(user_id)
-#     user_offers = []
-#     for offer in offers_by_user:
-#         offer_obj = {
-#             "id": offer.id,
-#             "user_id": offer.user_id,
-#             "request_id": offer.request_id,
-#             "message": offer.message,
-#             "bid": offer.bid,
-#             "status": offer.status,
-#         }
-#         user_offers.append(offer_obj)
-#
-#     return jsonify(user_offers), 200
-
-# # get all help offers made by a specific user
-# @app.route("/help_offers/<user_id>", methods=["GET"])
-# def find_offers_by_user_id(user_id):
-#
-#     # connect to db and set up offer repository
-#     connection = get_flask_database_connection(app)
-#     offer_repository = HelpOfferRepository(connection)
-#
-#     # returns array of HelpOffer object IDs made by user matching user_id
-#     offers_by_user = offer_repository.find_by_user(user_id)
-#     user_offers = []
-#     for offer in offers_by_user:
-#         offer_obj = {
-#             "id": offer.id,
-#             "user_id": offer.user_id,
-#             "request_id": offer.request_id,
-#             "message": offer.message,
-#             "bid": offer.bid,
-#             "status": offer.status,
-#         }
-#         user_offers.append(offer_obj)
-#
-#     return jsonify(user_offers), 200
 
 
 # create a new help offer for a help request
@@ -479,7 +437,6 @@ def get_all_help_requests_with_user_details():
 
 
 @app.route("/help_requests3", methods=["GET"])
-@jwt_required()
 @cross_origin()
 def get_help_requests_with_plant_photo_and_user_details():
     connection = get_flask_database_connection(app)
