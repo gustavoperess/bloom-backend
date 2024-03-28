@@ -15,7 +15,7 @@ from flask_socketio import SocketIO, emit, join_room, leave_room, rooms
 from werkzeug.utils import secure_filename
 
 from lib.database_connection import get_flask_database_connection
-
+import logging
 from lib.models.extended_help_offer import ExtendedHelpOffer
 from lib.models.help_offer import HelpOffer
 from lib.models.help_request import HelpRequest
@@ -776,7 +776,7 @@ def on_join(data):
     room = data['room']
     sid = request.sid
     join_room(room)
-    
+    logging.info(f"User {sid} joined room {room}")
     if room not in room_memberships:
         room_memberships[room] = []
     if sid not in room_memberships[room]:
@@ -788,6 +788,8 @@ def on_join(data):
 
 @socketio.on('message')
 def handle_message(data):
+    logging.info(f"Received message: {data}")
+    logging.info(f"Emitting new message to room {data['room']}")
     room = data['room']
     socketio.emit('new_messages', {'sender': data['sender'], 'message': data['message']}, room=room, include_self=False)
     
@@ -804,6 +806,7 @@ def on_leave(data):
 @socketio.on('disconnect')
 def handle_disconnect():
     sid = request.sid
+    logging.info(f"Socket {sid} disconnected")
     for room, members in room_memberships.items():
         if sid in members:
             members.remove(sid)
