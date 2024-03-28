@@ -41,10 +41,15 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(
     days=1
 )  # I JUST ADD THIS FOR NOW SO THE TOKEN DON"T KEEP EXIRING PLEASE REMOVE LATER.
 
-CORS(app, origins=[os.getenv("FRONTEND_ORIGIN")], supports_credentials=True)
+CORS(app, origins="*", supports_credentials=True) # also added this
 
-socketio = SocketIO(app, cors_allowed_origins="*", logger=False, engineio_logger=False, async_mode="gevent")
-
+socketio = SocketIO(
+    app,
+    cors_allowed_origins="*",# added this instead of allowing all 
+    logger=True,
+    engineio_logger=True,
+    async_mode="gevent",
+)  # we are allowing all origings just for development
 jwt = JWTManager(app)
 
 
