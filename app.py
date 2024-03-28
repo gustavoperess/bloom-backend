@@ -627,7 +627,6 @@ my_token = os.getenv("TREFLE_KEY")
 @cross_origin()
 @jwt_required()
 def get_plants_by_name():
-    my_token = current_app.config['TREFLE_KEY']
     current_app.logger.info("Endpoint /api/plants/name called")
     name = request.json.get("name")
     try:
