@@ -13,7 +13,7 @@ from flask_jwt_extended import JWTManager, create_access_token, jwt_required
 from flask_socketio import SocketIO, emit, join_room, leave_room, rooms
 from requests.exceptions import RequestException
 from werkzeug.utils import secure_filename
-
+import gevent.monkey
 from lib.database_connection import get_flask_database_connection
 
 from lib.models.extended_help_offer import ExtendedHelpOffer
@@ -33,7 +33,7 @@ load_dotenv()
 
 
 app = Flask(__name__)
-
+gevent.monkey.patch_all()
 
 # Token Setup
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")

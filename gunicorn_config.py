@@ -1,5 +1,7 @@
 # gunicorn_config.py
 import multiprocessing
+import gevent.monkey
+gevent.monkey.patch_all()
 
 # Basic bind configuration - IP and port your app will listen on
 bind = "0.0.0.0:5000"
