@@ -41,7 +41,7 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(
     days=1
 )  # I JUST ADD THIS FOR NOW SO THE TOKEN DON"T KEEP EXIRING PLEASE REMOVE LATER.
 
-CORS(app, origins="*", supports_credentials=True) # also added this
+CORS(app, origins=["https://bloom-frontend-vryp.onrender.com"], supports_credentials=True)
 
 socketio = SocketIO(
     app,
@@ -53,18 +53,18 @@ socketio = SocketIO(
 jwt = JWTManager(app)
 
 
-
-@app.before_request
-def log_request_info():
-    print('Headers: %s', request.headers)
-    print('Body: %s', request.get_data())
-    
-    
 @app.after_request
-def log_response_info(response):
-    print('Response Headers:', response.headers)
+def after_request_func(response):
+    response.headers.add('Access-Control-Allow-Origin', 'https://bloom-frontend-vryp.onrender.com')
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
     return response
 
+@app.route('/help_requests3', methods=['GET'])
+def get_help_requests3():
+    # Your existing route logic
+    return jsonify({"message": "CORS should work"})
 
 @app.route('/')
 def index():
