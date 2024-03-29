@@ -56,13 +56,17 @@ jwt = JWTManager(app)
 
 @app.before_request
 def log_request_info():
+    print("THIS IS BEFORE THE REQUEST")
     print('Headers: %s', request.headers)
     print('Body: %s', request.get_data())
     
     
 @app.after_request
-def log_response_info(response):
-    print('Response Headers:', response.headers)
+def after_request(response):
+    # Log the request and response headers here
+    print("THIS IS AFTER THE REQUEST")
+    app.logger.info(f"Request Headers: {request.headers}")
+    app.logger.info(f"Response Headers: {response.headers}")
     return response
 
 
