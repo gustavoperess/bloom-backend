@@ -1,7 +1,7 @@
+# Enviroment source ~/.local/share/virtualenvs/BLOOM_BACKEND-WGNVs9gi/bin/activate
 import os
 from datetime import timedelta
 import requests
-
 import cloudinary
 import cloudinary.uploader
 from dotenv import load_dotenv
