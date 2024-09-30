@@ -2,14 +2,16 @@ import os, psycopg
 from flask import g
 from psycopg.rows import dict_row
 
-
+from dotenv import load_dotenv
+load_dotenv()
 class DatabaseConnection:
     database_url = os.getenv("DATABASE_URL")
-
+    
+    print(database_url)
 
     def __init__(self, test_mode=False):
         self.test_mode = test_mode
-        if test_mode:
+        if not test_mode:
             self.database_url += "_test"
 
     def connect(self):
