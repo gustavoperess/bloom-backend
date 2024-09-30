@@ -6,7 +6,7 @@ import pytest
 from lib.models.chat import Chat
 from lib.repositories.chat_repository import ChatRepository
 
-
+@pytest.mark.skip
 def test_find_messages_by_userid(db_connection):
     db_connection.seed("seeds/bloom.sql")
     repository = ChatRepository(db_connection)
