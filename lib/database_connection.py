@@ -11,8 +11,8 @@ class DatabaseConnection:
 
     def __init__(self, test_mode=False):
         self.test_mode = test_mode
-        if test_mode:
-            self.database_url += "_test"
+        # if not test_mode:
+        #     self.database_url += "_test"
 
     def connect(self):
         try:
