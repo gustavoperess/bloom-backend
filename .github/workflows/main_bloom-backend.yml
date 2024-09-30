@@ -13,28 +13,20 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up Python version
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-
       - name: Create and start virtual environment
         run: |
           python -m venv venv
           source venv/bin/activate
-      
       - name: Install dependencies
         run: pip install -r requirements.txt
-        
-      # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
-
       - name: Zip artifact for deployment
         run: zip release.zip ./* -r
-
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
         with:
@@ -46,33 +38,31 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    permissions:
-      id-token: write #This is required for requesting the JWT
-
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: python-app
-
       - name: Unzip artifact for deployment
         run: unzip release.zip
-
-      
       - name: Login to Azure
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_1269EB43039248098F23CA6F8D226A73 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_E086E2CD67854E55A6374682B99415FD }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A198883C172546A296F169A4AA527A04 }}
-
+      - name: Set environment variables in Azure
+        run: |
+          az webapp config appsettings set --name bloom-backend --resource-group <your-resource-group> --settings \
+          CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }} \
+          CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }} \
+          CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }} \
+          DATABASE_URL=${{ secrets.DATABASE_URL }} \
+          JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
+          TREFLE_KEY=${{ secrets.TREFLE_KEY }}
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
           app-name: 'bloom-backend'
           slot-name: 'Production'
-          
