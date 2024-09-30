@@ -42,6 +42,14 @@ jobs:
           path: |
             release.zip
             !venv/
+        env:
+          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}  
+          CLOUDINARY_API_SECRET:  ${{ secrets.CLOUDINARY_API_SECRET }}  
+          CLOUDINARY_CLOUD_NAME:  ${{ secrets.CLOUDINARY_CLOUD_NAME }}  
+          DATABASE_URL:  ${{ secrets.DATABASE_URL }}  
+          JWT_SECRET_KEY:  ${{ secrets.JWT_SECRET_KEY }}  
+          TREFLE_KEY:  ${{ secrets.TREFLE_KEY }}  
+
 
   deploy:
     runs-on: ubuntu-latest
@@ -68,16 +76,6 @@ jobs:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_1269EB43039248098F23CA6F8D226A73 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_E086E2CD67854E55A6374682B99415FD }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A198883C172546A296F169A4AA527A04 }}
-
-      - name: Set environment variables in Azure
-        run: |
-          az webapp config appsettings set --name bloom-backend --resource-group <your-resource-group> --settings \
-          CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }} \
-          CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }} \
-          CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }} \
-          DATABASE_URL=${{ secrets.DATABASE_URL }} \
-          JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
-          TREFLE_KEY=${{ secrets.TREFLE_KEY }}
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
