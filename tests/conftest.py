@@ -13,7 +13,7 @@ from app import app
 # This fixture is used to create a database connection.
 @pytest.fixture
 def db_connection():
-    conn = DatabaseConnection(test_mode=True)
+    conn = DatabaseConnection(test_mode=False)
     conn.connect()
     return conn
 
