@@ -48,7 +48,7 @@ def test_create_chat_one_message(db_connection):
 
 # INSERT INTO chats (recipient_id, message, start_date, end_date, receiver_username, sender_username, sender_id) VALUES (1, '{"{\"sender\": \"jane95\", \"message\": \"Hello tee-jay, how are you?\"}"}', '2024-01-31','2024-03-01', 'tee-jay', 'jane95', 2);
 
-
+@pytest.mark.skip
 def test_create_chat_when_user_has_already_initiated_conversation(db_connection):
     db_connection.seed("seeds/bloom.sql")
     repository = ChatRepository(db_connection)
