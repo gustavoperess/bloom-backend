@@ -42,6 +42,13 @@ jobs:
           path: |
             release.zip
             !venv/
+        env:
+          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}  
+          CLOUDINARY_API_SECRET:  ${{ secrets.CLOUDINARY_API_SECRET }}  
+          CLOUDINARY_CLOUD_NAME:  ${{ secrets.CLOUDINARY_CLOUD_NAME }}  
+          DATABASE_URL:  ${{ secrets.DATABASE_URL }}  
+          JWT_SECRET_KEY:  ${{ secrets.JWT_SECRET_KEY }}  
+          TREFLE_KEY:  ${{ secrets.TREFLE_KEY }}  
 
   deploy:
     runs-on: ubuntu-latest
